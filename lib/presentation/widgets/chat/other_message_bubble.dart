@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:yes_no_app/domain/entities/message.dart';
 
 class OtherMessageBubble extends StatelessWidget {
-  const OtherMessageBubble({super.key});
+  final Message message;
 
+  const OtherMessageBubble({super.key, required this.message});
+  
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -13,18 +16,19 @@ class OtherMessageBubble extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               color: colors.secondary, borderRadius: BorderRadius.circular(20)),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Text(
-              'Hola mundo',
-              style: TextStyle(color: Colors.white),
+              message.text,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),
         const SizedBox(
           height: 5,
         ),
-        _ImageBubble(),
+        if (message.imageUrl != null) 
+          _ImageBubble(message.imageUrl!),
         const SizedBox(
           height: 5,
         ),
@@ -34,6 +38,9 @@ class OtherMessageBubble extends StatelessWidget {
 }
 
 class _ImageBubble extends StatelessWidget {
+  final String image;
+
+  const _ImageBubble(this.image);
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -41,9 +48,10 @@ class _ImageBubble extends StatelessWidget {
     return ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Image.network(
-          "https://yesno.wtf/assets/no/31-cc391a4c0332a4ce5b4d4666f64a7b4a.gif",
+          image,
           width: size.width * 0.7,
           height: 150,
+          fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if(loadingProgress == null) return child;
 
@@ -51,7 +59,7 @@ class _ImageBubble extends StatelessWidget {
               width: size.width * 0.7,
               height: 150,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: const Text('Imagen cargando'),
+              child: const Text('loading...'),
             );
           },
         ));
